@@ -77,7 +77,7 @@ size = region.GetSize()
 #Save as mha
 WriterMHA = itk.ImageFileWriter[RescaleImageType]
 writer = WriterMHA.New()
-writer.SetInput(thresholdFilter.GetOutput())
+writer.SetInput(closingFilter.GetOutput())
 writer.SetFileName(output_file)
 writer.Update()
 
