@@ -49,9 +49,28 @@ thresholdFilter.SetOutsideValue(0)
 thresholdFilter.SetInsideValue(255)
 
 #Fill holes
-#fillFilter = itk.BinaryFillholeImageFilter[RescaleImageType].New()
-#fillFilter.SetInput(thresholdFilter
+radiusValue = 2
+StructuringElementType = itk.FlatStructuringElement[Dimension]
+structuringElement = StructuringElementType.Ball(radiusValue)
 
+ErodeFilterType = itk.BinaryMorphologicalOpeningImageFilter[RescaleImageType,
+                                             RescaleImageType,
+                                             StructuringElementType]
+openingFilter = ErodeFilterType.New()
+openingFilter.SetInput(thresholdFilter.GetOutput())
+openingFilter.SetKernel(structuringElement)
+openingFilter.SetForegroundValue(255)
+openingFilter.SetBackgroundValue(0)
+openingFilter.Update()
+
+ErodeFilterType = itk.BinaryMorphologicalClosingImageFilter[RescaleImageType,
+                                             RescaleImageType,
+                                             StructuringElementType]
+closingFilter = ErodeFilterType.New()
+closingFilter.SetInput(openingFilter.GetOutput())
+closingFilter.SetKernel(structuringElement)
+closingFilter.SetForegroundValue(255)
+closingFilter.Update()
 
 region = reader.GetOutput().GetLargestPossibleRegion()
 size = region.GetSize()
@@ -68,7 +87,7 @@ OutputImageType = itk.Image[OutputPixelType, 2]
 
 WriterType = itk.ImageSeriesWriter[RescaleImageType, OutputImageType]
 writer = WriterType.New()
-writer.SetInput(thresholdFilter.GetOutput())
+writer.SetInput(closingFilter.GetOutput())
 writer.SetFileNames(fnames.GetFileNames())
 
 writer.Update()
