@@ -3,12 +3,12 @@ import itk
 
 brain_file = "Data/brats.mha"
 #Saving to a file as itk/vtk interaction is broken
-temp_file = "Data/seg.mha"
+output_file = "Data/seg.mha"
 
 #ITK
 
 #Input handling
-fileNameFormat = temp_file + "-%d" + ".png"
+fileNameFormat = output_file + "-%d" + ".png"
 
 Dimension = 3
 PixelType = itk.ctype('short')
@@ -55,6 +55,12 @@ thresholdFilter.SetInsideValue(255)
 region = reader.GetOutput().GetLargestPossibleRegion()
 size = region.GetSize()
 
+#Save as mha
+WriterMHA = itk.ImageFileWriter[RescaleImageType]
+writer = WriterMHA.New()
+writer.SetInput(thresholdFilter.GetOutput())
+writer.SetFileName(output_file)
+writer.Update()
 
 #Save all slices as png for manual inspection
 fnames = itk.NumericSeriesFileNames.New()
