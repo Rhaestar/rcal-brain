@@ -1,0 +1,28 @@
+# [RCAL] Brain tumor segmentation
+
+End-of-course project at EPITA, major Image 2021, course RCAL
+
+Authors:
+    - Simon Regourd , simon.regourd@epita.fr
+    - Stanislas Sokolov, stanislas.sokolov@epita.fr
+
+# Usage
+
+Use Python 3.8
+
+There are two scripts:
+    - seg.py is to segment the tumor
+    - vision.py is to visualize the tumor in the Brain
+
+To use them, create an virtual python environement, install the requirements
+with pip and you are ready to go.
+
+'''
+42$ python -m venv env
+42$ . env/bin/activate
+42$ pip install -r requirements.txt
+42$ python seg.py
+42$ python vision.py
+'''
+
+For more info you can use the help option (-h) to show the usage each script. 
