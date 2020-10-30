@@ -1,4 +1,3 @@
-import vtk
 import itk
 
 brain_file = "Data/brats.mha"
@@ -71,28 +70,31 @@ closingFilter.SetKernel(structuringElement)
 closingFilter.SetForegroundValue(255)
 closingFilter.Update()
 
-region = reader.GetOutput().GetLargestPossibleRegion()
-size = region.GetSize()
+CCImageType = itk.Image[itk.US, Dimension]
+
+CCImageFilterType = itk.ConnectedComponentImageFilter[RescaleImageType, CCImageType]
+CCImageFilter = CCImageFilterType.New()
+CCImageFilter.SetInput(closingFilter.GetOutput())
+CCImageFilter.Update()
+
+LabelFilterType = itk.LabelShapeKeepNObjectsImageFilter[CCImageType]
+LabelFilter = LabelFilterType.New()
+LabelFilter.SetInput(CCImageFilter.GetOutput())
+LabelFilter.SetBackgroundValue(0)
+LabelFilter.SetNumberOfObjects(1)
+LabelFilter.SetAttribute("NumberOfPixels")
+LabelFilter.Update()
+
+OutputFilterType = itk.RescaleIntensityImageFilter[CCImageType, RescaleImageType]
+OutputFilter = OutputFilterType.New()
+OutputFilter.SetOutputMinimum(0)
+OutputFilter.SetOutputMaximum(255)
+OutputFilter.SetInput(LabelFilter.GetOutput())
+OutputFilter.Update()
 
 #Save as mha
 WriterMHA = itk.ImageFileWriter[RescaleImageType]
 writer = WriterMHA.New()
-writer.SetInput(closingFilter.GetOutput())
+writer.SetInput(OutputFilter.GetOutput())
 writer.SetFileName(output_file)
-writer.Update()
-
-#Save all slices as png for manual inspection
-fnames = itk.NumericSeriesFileNames.New()
-fnames.SetStartIndex(0)
-fnames.SetEndIndex(size[2] - 1)
-fnames.SetIncrementIndex(1)
-fnames.SetSeriesFormat(fileNameFormat)
-
-OutputImageType = itk.Image[OutputPixelType, 2]
-
-WriterType = itk.ImageSeriesWriter[RescaleImageType, OutputImageType]
-writer = WriterType.New()
-writer.SetInput(closingFilter.GetOutput())
-writer.SetFileNames(fnames.GetFileNames())
-
 writer.Update()
