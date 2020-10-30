@@ -1,11 +1,28 @@
 import vtk
+import argparse
+
+brain = "./Data/brats.mha"
+tumor = "./Data/seg.mha"
+
+parser = argparse.ArgumentParser(description='Visual interpretation of a tumor segmentation')
+parser.add_argument('-b', '--brain', help='brain file, default is ./Data/brats.mha')
+parser.add_argument('-t', '--tumor', help='tumor file, default is ./Data/seg.mha')
+args = vars(parser.parse_args())
+
+if (args["brain"] is not None):
+        brain = args["brain"]
+
+if (args["tumor"] is not None):
+        tumor = args["tumor"]
+
+## -- Read Files --------------------------------------------------------------
 
 reader = vtk.vtkMetaImageReader()
-reader.SetFileName('Data/brats.mha')
+reader.SetFileName(brain)
 reader.Update()
 
 reader2 = vtk.vtkMetaImageReader()
-reader2.SetFileName('Data/seg.mha')
+reader2.SetFileName(tumor)
 reader2.Update()
 
 opacity_transfer_function = vtk.vtkPiecewiseFunction()
@@ -13,6 +30,8 @@ opacity_transfer_function.AddPoint(0.0, 0.0)
 opacity_transfer_function.AddPoint(90, 0.0)
 opacity_transfer_function.AddPoint(100, 0.2)
 opacity_transfer_function.AddPoint(120, 0.0)
+
+## -- Rendering ---------------------------------------------------------------
 
 #Render brain as wireframe
 marchingCubes = vtk.vtkMarchingCubes()
