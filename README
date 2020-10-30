@@ -25,4 +25,4 @@ with pip and you are ready to go.
 42$ python vision.py
 '''
 
-For more info you can use the help option (-h) to show the usage each script. 
+For more info you can use the help option (-h) to show the usage of each script. 
