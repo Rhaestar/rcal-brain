@@ -1,7 +1,21 @@
 import itk
+import argparse
 
 brain_file = "Data/brats.mha"
 output_file = "Data/seg.mha"
+
+## ---------- Arg parsing -----------------------------------------------------
+
+parser = argparse.ArgumentParser(description='Naive segmentation of a brain tumor using itk library')
+parser.add_argument('-i', '--input_file', help='input file, default is ./Data/brats.mha')
+parser.add_argument('-o', '--output_file', help='output file, default is ./Data/seg.mha')
+args = vars(parser.parse_args())
+
+if (args["input_file"] is not None):
+        brain_file = args["input_file"]
+
+if (args["output_file"] is not None):
+        output_file = args["output_file"]
 
 ## ---------- Reading Brain ---------------------------------------------------
 
