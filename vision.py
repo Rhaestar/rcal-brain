@@ -29,7 +29,6 @@ polyMapper.Update()
 actor = vtk.vtkActor()
 actor.SetMapper(polyMapper)
 actor.GetProperty().SetOpacity(0.25);
-#actor.GetProperty().SetRepresentationToWireframe()
 
 #Render tumor
 marchingCubes2 = vtk.vtkMarchingCubes()
@@ -47,7 +46,6 @@ colors = vtk.vtkNamedColors()
 actor2 = vtk.vtkActor()
 actor2.SetMapper(polyMapper2)
 actor2.GetProperty().SetDiffuseColor(colors.GetColor3d("Tomato"))
-#actor2.GetProperty().SetRepresentationToWireframe()
 
 renderer = vtk.vtkRenderer()
 renderer.SetBackground(0.5, 0.5, 0.5)
